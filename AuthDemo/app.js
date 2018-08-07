@@ -1,4 +1,4 @@
-var express               = require("express"),
+const express               = require("express"),
     mongoose              = require("mongoose"),
     passport              = require("passport"),
     bodyParser            = require("body-parser"),
@@ -8,7 +8,7 @@ var express               = require("express"),
    
 mongoose.connect("mongodb://localhost/auth_demo_app");
 
-var app = express();
+const app = express();
 app.set("view engine", "ejs");
 app.use(require("express-session")({
     secret:"Lemmy is the king of Rock'n'roll",
@@ -85,8 +85,4 @@ function isLoggedIn(req,res,next) {
     res.redirect("/login");
 }
 
-app.listen(process.env.PORT,process.env.IP,function () {
-    console.log("===============");
-    console.log("server started!");
-    console.log("===============");
-})
+app.listen(3000, () => console.log('Example app listening on port 3000!'))
