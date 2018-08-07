@@ -1,10 +1,10 @@
-const express               = require("express"),
-    mongoose              = require("mongoose"),
-    passport              = require("passport"),
-    bodyParser            = require("body-parser"),
-    User                  = require("./models/user"),
-    LocalStrategy         = require("passport-local"),
-    passportLocalMongoose = require("passport-local-mongoose");
+const   express               = require("express"),
+        mongoose              = require("mongoose"),
+        passport              = require("passport"),
+        bodyParser            = require("body-parser"),
+        User                  = require("./models/user"),
+        LocalStrategy         = require("passport-local"),
+        passportLocalMongoose = require("passport-local-mongoose");
    
 mongoose.connect("mongodb://localhost/auth_demo_app");
 
@@ -27,62 +27,60 @@ passport.deserializeUser(User.deserializeUser());
 // ROUTES
 // ===========
 
-app.get("/", function (req,res) {
+ const isLoggedIn = (req,res,next) => {
+    req.isAuthenticated() ? 
+        (res.set('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0'),
+        next() )
+     :
+    res.redirect("/login");
+}
+
+app.get("/",  (req,res) => {
     res.render("home");
 });
 
-app.get("/secret",isLoggedIn, function (req,res) {
+app.get("/secret",isLoggedIn,  (req,res) => {
     res.render("secret");
 });
 
 // Auth Routes
 
 // show signup form
-app.get("/register", function (req,res) {
+app.get("/register",  (req,res) => {
     res.render("register");
 });
 
 // handling user signup
-
-app.post("/register",function (req,res) {
+app.post("/register", (req,res) => {
     req.body.username;
     req.body.password;
-    User.register(new User({username:req.body.username}),req.body.password, function (err,user) {
-        if (err) {
-            console.log(err);
-            return res.render("register");
-        } else{
-            passport.authenticate("local")(req,res, function () {
+    User.register(new User({username:req.body.username}),req.body.password,  (err,user) => {
+        err ? 
+            (console.log(err),
+            res.render("register"))
+            :
+            passport.authenticate("local")(req,res,  () => {
                 res.redirect("/secret");
-            });
-        }
+            });  
     });
 });
 
 // LOGIN ROUTES
 // render login form
-app.get("/login",function (req,res) {
+app.get("/login", (req,res) => {
     res.render("login");
 });
 // login logic
 app.post("/login",passport.authenticate("local",{
     successRedirect:"/secret",
     failureRedirect:"/login"
-}), function (req,res) {
+}),  (req,res) => {
     // body...
 });
 
-app.get("/logout", function (req,res) {
+app.get("/logout",  (req,res) => {
     req.logout();
     res.redirect("/");
 });
-
-function isLoggedIn(req,res,next) {
-    if (req.isAuthenticated()) {
-        res.set('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
-        return next();
-    }
-    res.redirect("/login");
-}
 
 app.listen(3000, () => console.log('Example app listening on port 3000!'))
