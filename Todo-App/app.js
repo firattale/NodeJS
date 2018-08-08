@@ -4,7 +4,7 @@ const express        = require("express"),
     bodyParser       = require("body-parser"),
     expressSanitizer = require("express-sanitizer");
 
-mongoose.connect("mongodb://localhost/todo_app", { useMongoClient: true });
+mongoose.connect("mongodb://localhost:27017/todo_app", { useMongoClient: true });
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(expressSanitizer());
 

@@ -6,7 +6,7 @@ const   express               = require("express"),
         LocalStrategy         = require("passport-local"),
         passportLocalMongoose = require("passport-local-mongoose");
    
-mongoose.connect("mongodb://localhost/auth_demo_app");
+mongoose.connect("mongodb://localhost:27017/auth", { useNewUrlParser: true });
 
 const app = express();
 app.set("view engine", "ejs");
